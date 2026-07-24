@@ -18,7 +18,7 @@
     <select id="getOverflowNumber" resultType="java.lang.String">
         select max(overflow_number) as overflowNumber
         from t_overflow_list
-        where to_days(overflow_date) = to_days(now())
+        where trunc(overflow_date) = trunc(sysdate)
     </select>
     <select id="overFlowList" resultType="com.lzj.admin.pojo.OverflowList">
         select

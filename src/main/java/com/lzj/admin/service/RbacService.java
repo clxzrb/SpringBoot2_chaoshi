@@ -10,4 +10,5 @@ import java.util.List;
  */
 public interface RbacService{
     public List<String> findRoleByUserName(String userName);
-    public List<String> findAuthoritiesByRoleName(List<String> roleName);}
+    public List<String> findAuthoritiesByRoleName(List<String> roleName);
+}

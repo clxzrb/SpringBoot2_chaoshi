@@ -2,7 +2,11 @@ package com.lzj.admin.mapper;
 
 import com.lzj.admin.pojo.PurchaseListGoods;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -14,5 +18,8 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface PurchaseListGoodsMapper extends BaseMapper<PurchaseListGoods> {
-
+	/**
+         * 根据进货单ID查询商品明细
+     */
+    List<PurchaseListGoods> listPurchaseGoodsByPurchaseId(@Param("purchaseListId") Integer purchaseListId);
 }

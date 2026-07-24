@@ -6,6 +6,7 @@ import com.lzj.admin.model.RespBean;
 import com.lzj.admin.pojo.GoodsType;
 import com.lzj.admin.service.GoodsTypeService;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,10 @@ import java.util.Map;
 @Controller
 @RequestMapping("/goodsType")
 public class GoodsTypeController {
-
+	@GetMapping("/index")
+    public String index(){
+        // 返回ftl页面名称
+        return "goodsType/goods_type";
+    }
 
 }

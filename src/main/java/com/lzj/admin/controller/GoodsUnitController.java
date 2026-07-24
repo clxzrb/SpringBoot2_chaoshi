@@ -3,6 +3,8 @@ package com.lzj.admin.controller;
 
 import com.lzj.admin.pojo.GoodsUnit;
 import com.lzj.admin.service.GoodsUnitService;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,10 @@ import java.util.List;
 @Controller
 @RequestMapping("/goodsUnit")
 public class GoodsUnitController {
-
+	@GetMapping("/index")
+    public String index(){
+        // 返回ftl页面名称
+        return "goods/goods_type";
+    }
 
 }

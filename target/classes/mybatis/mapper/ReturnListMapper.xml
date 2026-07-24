@@ -22,7 +22,7 @@
     <select id="getNextReturnNumber" resultType="java.lang.String">
         select max(return_number) as returnNumber
         from t_return_list
-        where to_days(return_date) = to_days(now())
+        where trunc(return_date) = trunc(sysdate)
     </select>
     <select id="returnList" resultType="com.lzj.admin.pojo.ReturnList">
         SELECT

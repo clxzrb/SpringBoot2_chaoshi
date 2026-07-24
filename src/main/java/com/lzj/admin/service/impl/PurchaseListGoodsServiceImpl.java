@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * <p>
  * 进货单商品表 服务实现类
@@ -23,5 +25,17 @@ import java.util.Map;
  */
 @Service
 public class PurchaseListGoodsServiceImpl extends ServiceImpl<PurchaseListGoodsMapper, PurchaseListGoods> implements PurchaseListGoodsService {
+	@Resource
+    private PurchaseListGoodsMapper purchaseListGoodsMapper;
 
+	@Override
+    public Map<String, Object> purchaseListGoodsList(PurchaseListGoodsQuery purchaseListGoodsQuery) {
+        IPage<PurchaseListGoods> page = new Page<>(purchaseListGoodsQuery.getPage(), purchaseListGoodsQuery.getLimit());
+        QueryWrapper<PurchaseListGoods> wrapper = new QueryWrapper<>();
+        if(null != purchaseListGoodsQuery.getPurchaseListId()){
+            wrapper.eq("purchase_list_id", purchaseListGoodsQuery.getPurchaseListId());
+        }
+        page = this.baseMapper.selectPage(page, wrapper);
+        return PageResultUtil.setResult(page.getTotal(), page.getRecords());
+    }
 }

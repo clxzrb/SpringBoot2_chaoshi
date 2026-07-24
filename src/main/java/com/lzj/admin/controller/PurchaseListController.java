@@ -12,6 +12,7 @@ import com.lzj.admin.service.PurchaseListService;
 import com.lzj.admin.service.UserService;
 import com.lzj.admin.utils.AssertUtil;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
@@ -30,5 +31,36 @@ import java.util.Map;
 @Controller
 @RequestMapping("/purchase")
 public class PurchaseListController {
+	@GetMapping("/index")
+    public String index(){
+        // 返回ftl页面名称
+        return "purchase/purchase";
+    }
+	
+	@GetMapping("/searchPage")
+    public String searchPage(){
+        // 返回ftl页面名称
+        return "purchase/purchase_search";
+    }
+	
+	@Resource
+    private PurchaseListService purchaseListService;
+	/**
+         * 分页列表数据接口
+     */
+    @RequestMapping("list")
+    @ResponseBody
+    public Map<String,Object> purchaseList(PurchaseListQuery purchaseListQuery){
+        return purchaseListService.purchaseList(purchaseListQuery);
+    }
 
+    /**
+         * 删除进货单
+     */
+    @RequestMapping("delete")
+    @ResponseBody
+    public RespBean delete(Integer id){
+        purchaseListService.deletePurchaseList(id);
+        return RespBean.success("删除成功");
+    }
 }

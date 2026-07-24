@@ -18,7 +18,7 @@
     <select id="getNextDamageNumber" resultType="java.lang.String">
         select max(damage_number) as damageNumber
         from t_damage_list
-        where to_days(damage_date) = to_days(now())
+        where trunc(damage_date) = trunc(sysdate)
     </select>
     <select id="damageList" resultType="com.lzj.admin.pojo.DamageList">
         select

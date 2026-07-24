@@ -39,7 +39,25 @@ import java.util.Map;
  */
 @Service
 public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, PurchaseList> implements PurchaseListService {
+	@Resource
+    private PurchaseListGoodsService purchaseListGoodsService;
 
+    @Override
+    public Map<String, Object> purchaseList(PurchaseListQuery purchaseListQuery) {
+        IPage<PurchaseList> page = new Page<>(purchaseListQuery.getPage(), purchaseListQuery.getLimit());
+        page = this.baseMapper.purchaseList(page, purchaseListQuery);
+        return PageResultUtil.setResult(page.getTotal(), page.getRecords());
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void deletePurchaseList(Integer id) {
+        // 1.先删除进货单商品明细
+        AssertUtil.isTrue(!purchaseListGoodsService.remove(new QueryWrapper<PurchaseListGoods>().eq("purchase_list_id", id)),
+                "商品明细删除失败");
+        // 2.删除主进货单记录
+        AssertUtil.isTrue(!this.removeById(id), "进货单删除失败");
+    }
 
 
 }

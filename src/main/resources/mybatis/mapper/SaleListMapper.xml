@@ -22,7 +22,7 @@
     <select id="getNextSaleNumber" resultType="java.lang.String">
         select max(sale_number) as saleNumber
         from t_sale_list
-        where to_days(sale_date) = to_days(now())
+        where trunc(sale_date) = trunc(sysdate)
     </select>
 
 
