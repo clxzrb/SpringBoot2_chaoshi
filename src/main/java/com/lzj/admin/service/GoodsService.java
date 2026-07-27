@@ -13,5 +13,18 @@ import java.util.Map;
  * @date 2022/1/19 13:55
  */
 public interface GoodsService extends IService<Goods> {
+	/**
+     * 分页查询商品列表
+     */
+    Map<String, Object> goodsList(GoodsQuery goodsQuery);
 
+    /**
+     * 新增/更新商品
+     */
+    void saveGoods(Goods goods);
+
+    /**
+     * 逻辑删除商品
+     */
+    void deleteGoods(Integer id);
 }

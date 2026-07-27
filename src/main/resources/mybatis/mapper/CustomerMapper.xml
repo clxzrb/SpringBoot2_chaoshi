@@ -15,7 +15,33 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, address, contact, name, number, remarks, is_del
+        "id", "address", "contact", "name", "number", "remarks", "is_del"
     </sql>
 
+	<!-- 手动统计总数 -->
+	<select id="countCustomer" resultType="java.lang.Long">
+	    SELECT COUNT(1) FROM t_customer
+	    WHERE "is_del" = 0
+	    <if test="null != customerQuery.customerName and customerQuery.customerName != ''">
+	        AND "name" LIKE CONCAT('%',#{customerQuery.customerName},'%')
+	    </if>
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="customerPageList" resultType="com.lzj.admin.pojo.Customer">
+	    SELECT "id","address","contact","name","number","remarks","is_del"
+	    FROM t_customer
+	    WHERE "is_del" = 0
+	    <if test="null != customerQuery.customerName and customerQuery.customerName != ''">
+	        "name" LIKE CONCAT('%',#{customerQuery.customerName},'%')
+	    </if>
+	    ORDER BY "id" DESC
+	</select>
+	
+	<!-- 根据名称查询客户 -->
+    <select id="findCustomerByName" resultMap="BaseResultMap">
+        SELECT "id", "address", "contact", "name", "number", "remarks", "is_del"
+        FROM t_customer
+        WHERE "is_del" = 0 AND "name" = #{name}
+    </select>
 </mapper>

@@ -13,5 +13,5 @@ import java.util.Map;
  * @date 2022/1/19 13:56
  */
 public interface GoodsTypeService extends IService<GoodsType> {
-
+	List<Map<String,Object>> queryAllGoodsTypes();
 }

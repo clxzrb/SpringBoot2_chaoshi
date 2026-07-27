@@ -16,9 +16,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 
 /**
  * 商品表类型实现类
@@ -27,5 +30,20 @@ import java.util.stream.Collectors;
  */
 @Service
 public class GoodsTypeServiceImpl extends ServiceImpl<GoodsTypeMapper, GoodsType> implements GoodsTypeService {
+	@Resource
+    private GoodsTypeMapper goodsTypeMapper;
 
+    @Override
+    public List<Map<String, Object>> queryAllGoodsTypes() {
+        List<GoodsType> typeList = this.list();
+        List<Map<String,Object>> mapList = new ArrayList<>();
+        for (GoodsType type : typeList) {
+            Map<String,Object> map = new HashMap<>();
+            map.put("id", type.getId());
+            map.put("pId", type.getpId());
+            map.put("name", type.getName());
+            mapList.add(map);
+        }
+        return mapList;
+    }
 }

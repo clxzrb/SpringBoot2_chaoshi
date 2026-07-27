@@ -7,6 +7,7 @@ import com.lzj.admin.pojo.GoodsType;
 import com.lzj.admin.service.GoodsTypeService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
@@ -23,10 +24,21 @@ import java.util.Map;
 @Controller
 @RequestMapping("/goodsType")
 public class GoodsTypeController {
+	@Resource
+    private GoodsTypeService goodsTypeService;
+
 	@GetMapping("/index")
     public String index(){
         // 返回ftl页面名称
-        return "goodsType/goods_type";
+        return "goods/goods_type";
     }
 
+    /**
+     * 查询所有商品类别zTree树形数据，返回Map数组
+     */
+    @PostMapping("/queryAllGoodsTypes")
+    @ResponseBody
+    public List<Map<String,Object>> queryAllGoodsTypes(){
+        return goodsTypeService.queryAllGoodsTypes();
+    }
 }

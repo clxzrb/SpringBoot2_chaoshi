@@ -1,5 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lzj.admin.mapper.GoodsMapper">
+    <!-- 通用返回映射，对应t_goods实体字段 -->
+    <resultMap id="BaseResultMap" type="com.lzj.admin.pojo.Goods">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="inventory_quantity" property="inventoryQuantity" />
+        <result column="min_num" property="minNum" />
+        <result column="model" property="model" />
+        <result column="name" property="name" />
+        <result column="producer" property="producer" />
+        <result column="purchasing_price" property="purchasingPrice" />
+        <result column="remarks" property="remarks" />
+        <result column="selling_price" property="sellingPrice" />
+        <result column="unit" property="unit" />
+        <result column="type_id" property="typeId" />
+        <result column="state" property="state" />
+        <result column="last_purchasing_price" property="lastPurchasingPrice" />
+        <result column="is_del" property="isDel" />
+    </resultMap>
 
+    <!-- 通用查询字段片段 -->
+    <sql id="Base_Column_List">
+        tg.id,
+        tg.code,
+        tg.inventory_quantity,
+        tg.min_num,
+        tg.model,
+        tg.name,
+        tg.producer,
+        tg.purchasing_price,
+        tg.remarks,
+        tg.selling_price,
+        tg.unit,
+        tg.type_id,
+        tg.state,
+        tg.last_purchasing_price,
+        tg.is_del,
+        tgt.name AS typeName
+    </sql>
+
+    <!--
+        分页查询商品列表
+        关联t_goods_type获取类别名称typeName（实体@TableField(exist=false)接收）
+        适配MyBatis-Plus IPage分页插件，Oracle自动分页
+        兼容GoodsQuery全部查询条件：商品名称、类别ID、库存筛选、逻辑删除过滤
+    -->
+    <select id="goodsList" resultType="com.lzj.admin.pojo.Goods">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            t_goods tg
+            LEFT JOIN t_goods_type tgt ON tg.type_id = tgt.id
+        <where>
+            <!-- 逻辑删除：只查询未删除商品 -->
+            tg.is_del = 0
+
+            <!-- 商品名称模糊查询 -->
+            <if test="null != goodsQuery.goodsName and goodsQuery.goodsName != ''">
+                tg.name LIKE CONCAT('%',#{goodsQuery.goodsName},'%')
+            </if>
+
+            <!-- 单类别筛选 -->
+            <if test="null != goodsQuery.typeId">
+                AND tg.type_id = #{goodsQuery.typeId}
+            </if>
+
+            <!-- 多类别ID集合筛选 -->
+            <if test="null != goodsQuery.typeIds and goodsQuery.typeIds.size() > 0">
+                AND tg.type_id IN
+                <foreach collection="goodsQuery.typeIds" item="tid" open="(" separator="," close=")">
+                    #{tid}
+                </foreach>
+            </if>
+
+            <!-- 库存筛选 type=1 库存=0；type=2 库存>0 -->
+            <if test="null != goodsQuery.type">
+                <choose>
+                    <when test="goodsQuery.type == 1">
+                        AND tg.inventory_quantity = 0
+                    </when>
+                    <when test="goodsQuery.type == 2">
+                        AND tg.inventory_quantity > 0
+                    </when>
+                </choose>
+            </if>
+        </where>
+        ORDER BY tg.id DESC
+    </select>
 </mapper>

@@ -12,5 +12,28 @@ import java.util.Map;
  * @date 2022/1/19 13:59
  */
 public interface SupplierService extends IService<Supplier> {
+	/**
+     * 供应商列表查询（分页）
+     */
+    Map<String, Object> supplierList(SupplierQuery supplierQuery);
 
+    /**
+     * 保存供应商
+     */
+    void saveSupplier(Supplier supplier);
+
+    /**
+     * 更新供应商
+     */
+    void updateSupplier(Supplier supplier);
+
+    /**
+     * 删除供应商
+     */
+    void deleteSupplier(Integer[] ids);
+
+    /**
+     * 根据名称查询供应商
+     */
+    Supplier findSupplierByName(String name);
 }

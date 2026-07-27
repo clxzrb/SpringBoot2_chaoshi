@@ -2,6 +2,7 @@ package com.lzj.admin.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
@@ -23,26 +24,31 @@ public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "\"id\"", type = IdType.AUTO)
     private Integer id;
 
     @ApiModelProperty(value = "客户地址")
+    @TableField("\"address\"")
     private String address;
 
     @ApiModelProperty(value = "联系人")
+    @TableField("\"contact\"")
     private String contact;
 
     @ApiModelProperty(value = "客户名称")
+    @TableField("\"name\"")
     private String name;
 
     @ApiModelProperty(value = "客户联系电话")
+    @TableField("\"number\"")
     private String number;
 
     @ApiModelProperty(value = "备注")
+    @TableField("\"remarks\"")
     private String remarks;
 
     @ApiModelProperty(value = "是否删除")
+    @TableField("\"is_del\"")
     private Integer isDel;
-
 
 }

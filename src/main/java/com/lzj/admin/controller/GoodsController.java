@@ -3,6 +3,7 @@ package com.lzj.admin.controller;
 
 import com.lzj.admin.model.RespBean;
 import com.lzj.admin.pojo.Goods;
+import com.lzj.admin.pojo.GoodsType;
 import com.lzj.admin.query.GoodsQuery;
 import com.lzj.admin.service.GoodsService;
 import com.lzj.admin.service.GoodsTypeService;
@@ -28,5 +29,65 @@ public class GoodsController {
     public String index(){
         // 返回ftl页面名称
         return "goods/goods";
+    }
+	@GetMapping("/addOrUpdateGoodsPage")
+	public String addOrUpdateGoodsPage(Integer id, Model model){
+	    if(null != id){
+	        Goods goods = goodsService.getById(id);
+	        model.addAttribute("goods", goods);
+	        if(goods.getTypeId() != null){
+	            GoodsType goodsType = goodsTypeService.getById(goods.getTypeId());
+	            model.addAttribute("goodsType", goodsType);
+	        }
+	    }
+	    return "goods/add_update";
+	}
+	@GetMapping("/toGoodsTypePage")
+	public String toGoodsTypePage(Integer typeId, Model model){
+	    model.addAttribute("typeId", typeId);
+	    return "goods/goods_type";
+	}
+	
+	@Resource
+    private GoodsService goodsService;
+	
+	@Resource
+    private GoodsTypeService goodsTypeService;
+
+    /**
+     * 分页列表数据接口
+     */
+    @RequestMapping("list")
+    @ResponseBody
+    public Map<String,Object> goodsList(GoodsQuery goodsQuery){
+        return goodsService.goodsList(goodsQuery);
+    }
+
+    /**
+     * 新增/编辑商品提交
+     */
+    @RequestMapping("save")
+    @ResponseBody
+    public RespBean save(Goods goods){
+        goodsService.saveGoods(goods);
+        return RespBean.success("操作成功");
+    }
+    
+    /** 编辑更新商品接口 */
+    @RequestMapping("update")
+    @ResponseBody
+    public RespBean update(Goods goods){
+        goodsService.saveGoods(goods);
+        return RespBean.success("修改成功");
+    }
+
+    /**
+     * 删除商品
+     */
+    @RequestMapping("delete")
+    @ResponseBody
+    public RespBean delete(Integer id){
+        goodsService.deleteGoods(id);
+        return RespBean.success("删除成功");
     }
 }
