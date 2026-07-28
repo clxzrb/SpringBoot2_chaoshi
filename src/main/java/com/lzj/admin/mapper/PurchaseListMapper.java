@@ -18,7 +18,7 @@ import java.util.List;
 @Mapper
 public interface PurchaseListMapper extends BaseMapper<PurchaseList> {
 	/**
-         * 分页查询进货单（关联供应商、用户）
+     * 分页查询进货单（关联供应商、用户）
      */
     IPage<PurchaseList> purchaseList(IPage<PurchaseList> page, @Param("purchaseListQuery") PurchaseListQuery purchaseListQuery);
     

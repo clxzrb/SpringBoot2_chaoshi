@@ -71,9 +71,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void saveGoods(Goods goods) {
         checkParams(goods.getTypeId(), goods.getName(), goods.getSellingPrice(), goods.getPurchasingPrice());
-        // 商品名称唯一校验
+        //商品名称唯一校验
         AssertUtil.isTrue(null != this.findGoodsByName(goods.getName()), "该商品名称已存在!");
-        // 初始化默认值
+        //初始化默认值
         goods.setIsDel(0);
         goods.setState(0);
         goods.setLastPurchasingPrice(goods.getPurchasingPrice());
@@ -89,7 +89,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     public void updateGoods(Goods goods) {
         AssertUtil.isTrue(null == this.getById(goods.getId()), "请选择商品记录!");
         checkParams(goods.getTypeId(), goods.getName(), goods.getSellingPrice(), goods.getPurchasingPrice());
-        // 重名校验：排除自身ID
+        // 重名校验
         Goods temp = this.findGoodsByName(goods.getName());
         AssertUtil.isTrue(null != temp && !temp.getId().equals(goods.getId()), "该商品名称已存在!");
         // 保留原有库存、上次采购价
@@ -115,7 +115,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     /**
-     * 统一参数校验（参照Supplier抽取私有方法）
+     * 统一参数校验
      */
     private void checkParams(Integer typeId, String goodsName, Float sellingPrice, Float purchasingPrice) {
         AssertUtil.isTrue(null == typeId, "商品类别不能为空!");
@@ -133,20 +133,20 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void updateStock(Goods goods) {
-        // 1.参数校验
+        //参数校验
     	AssertUtil.isTrue(null == goods.getId(), "商品ID不能为空！");
         AssertUtil.isTrue(null == goods.getInventoryQuantity() || goods.getInventoryQuantity() < 0, "库存数量不能为负数！");
         AssertUtil.isTrue(null == goods.getPurchasingPrice() || goods.getPurchasingPrice() <= 0, "成本价必须大于0！");
 
-        // 2.查询原商品
+        //查询原商品
         Goods oldGoods = this.getById(goods.getId());
         AssertUtil.isTrue(null == oldGoods, "商品不存在！");
 
-        // 3.更新库存、采购价，同步上次采购价，状态改为已入库1
+        //更新库存、采购价，同步上次采购价，状态改为已入库1
         oldGoods.setInventoryQuantity(goods.getInventoryQuantity());
         oldGoods.setPurchasingPrice(goods.getPurchasingPrice());
         oldGoods.setLastPurchasingPrice(goods.getPurchasingPrice());
-        oldGoods.setState(1); // 期初库存录入完成
+        oldGoods.setState(1);
         AssertUtil.isTrue(!this.updateById(oldGoods), "期初库存更新失败！");
     }
 
@@ -163,17 +163,17 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         AssertUtil.isTrue(!this.updateById(goods), "期初商品删除失败");
     }
     
- // ✅ 新增：查询所有商品类别（树状图）
+    //查询所有商品类别（树状图）
     @Override
     public List<TreeDto> queryAllGoodsTypes(Integer typeId) {
-        // 查询所有商品类别数据
+        //查询所有商品类别数据
         QueryWrapper<GoodsType> queryWrapper = new QueryWrapper<>();
         List<GoodsType> goodsTypeList = this.goodsTypeService.list(queryWrapper);
 
-        // 创建TreeDto集合
+        //创建TreeDto集合
         List<TreeDto> treeDtoList = new ArrayList<>();
 
-        // 将数据库实体GoodsType转换为前端需要的TreeDto
+        //将数据库实体GoodsType转换为前端需要的TreeDto
         for (GoodsType goodsType : goodsTypeList) {
             TreeDto treeDto = new TreeDto();
             treeDto.setId(goodsType.getId());

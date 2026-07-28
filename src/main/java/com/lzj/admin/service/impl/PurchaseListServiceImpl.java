@@ -54,10 +54,10 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void deletePurchaseList(Integer id) {
-        // 1.先删除进货单商品明细
+        //先删除进货单商品明细
         AssertUtil.isTrue(!purchaseListGoodsService.remove(new QueryWrapper<PurchaseListGoods>().eq("purchase_list_id", id)),
                 "商品明细删除失败");
-        // 2.删除主进货单记录
+        //删除主进货单记录
         AssertUtil.isTrue(!this.removeById(id), "进货单删除失败");
     }
 
@@ -95,33 +95,33 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
     }
 
     
-    //新增：保存进货单
+    //保存进货单
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void savePurchaseList(PurchaseList purchaseList, List<PurchaseListGoods> plgList) {
-        // 1. 参数校验
+        //参数校验
         AssertUtil.isTrue(purchaseList.getSupplierId() == null || purchaseList.getSupplierId() == 0, "请选择供应商");
         AssertUtil.isTrue(purchaseList.getAmountPayable() == null, "应付金额为空");
         AssertUtil.isTrue(purchaseList.getAmountPaid() == null, "实付金额为空");
         AssertUtil.isTrue(purchaseList.getPurchaseDate() == null, "请选择进货日期");
         AssertUtil.isTrue(plgList == null || plgList.isEmpty(), "请选择商品");
 
-        // 2. 保存进货单主表（MyBatis-Plus 自动回填 ID）
+        //保存进货单主表（MyBatis-Plus 自动回填 ID）
         AssertUtil.isTrue(!this.save(purchaseList), "进货单保存失败!");
 
-        // 3. 保存商品明细 + 更新库存（核心逻辑）
+        //保存商品明细 + 更新库存（核心逻辑）
         for (PurchaseListGoods plg : plgList) {
-            // 设置进货单ID
+            //设置进货单ID
             plg.setPurchaseListId(purchaseList.getId());
 
-            // ✅ 核心：更新商品库存（进货 = 库存增加）
+            //更新商品库存（进货 = 库存增加）
             Goods goods = goodsService.getById(plg.getGoodsId());
             if (goods != null) {
-                // 原库存 + 进货数量 = 新库存
+                //原库存 + 进货数量 = 新库存
                 int newQuantity = goods.getInventoryQuantity() + plg.getNum();
                 goods.setInventoryQuantity(newQuantity);
-                goods.setState(2);  // 有进货或销售单据
-                goods.setLastPurchasingPrice(plg.getPrice());  // 更新上次采购价
+                goods.setState(2);
+                goods.setLastPurchasingPrice(plg.getPrice());
                 AssertUtil.isTrue(!goodsService.updateById(goods), "商品库存更新失败!");
                 
                 System.out.println("商品ID: " + goods.getId() + 
@@ -130,7 +130,7 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
                     ", 新库存: " + goods.getInventoryQuantity());
             }
 
-            // 保存进货商品明细
+            //保存进货商品明细
             AssertUtil.isTrue(!purchaseListGoodsService.save(plg), "进货商品记录添加失败!");
         }
     }

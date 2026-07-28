@@ -29,32 +29,30 @@ public class LoginController {
                                      HttpSession session) {
         Map<String, Object> result = new HashMap<>();
 
-        // 1. 查询用户
+        //查询用户
         User user = userService.findForName(username);
 
-        // 2. 验证用户是否存在
+        //验证用户是否存在
         if (user == null) {
             result.put("code", 500);
             result.put("message", "用户名不存在");
             return result;
         }
-
-        // 3. 验证密码（数据库中的密码是明文还是加密？）
-        // 如果数据库存的是明文密码：
+        //验证密码
         if (!password.equals(user.getPassword())) {
             result.put("code", 500);
             result.put("message", "密码错误");
             return result;
         }
 
-        // 4. 检查用户是否被禁用
+        //检查用户是否被禁用
         if (user.getIsDel() != null && user.getIsDel() == 1) {
             result.put("code", 500);
             result.put("message", "用户已被禁用");
             return result;
         }
 
-        // 5. 登录成功
+        //登录成功
         session.setAttribute("loginUser", user);
         session.setAttribute("username", username);
 

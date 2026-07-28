@@ -45,7 +45,7 @@
         WHERE "is_del" = 0 AND "name" = #{name}
     </select>
     
-    <!-- ✅ 查询所有未删除客户 -->
+    <!-- 查询所有未删除客户 -->
 	<select id="findAllCustomers" resultMap="BaseResultMap">
 	    SELECT "id", "address", "contact", "name", "number", "remarks", "is_del"
 	    FROM t_customer

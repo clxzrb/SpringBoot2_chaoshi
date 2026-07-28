@@ -31,7 +31,7 @@
           AND is_del = 0
     </select>
 
-    <!-- 根据名称查询未删除菜单（排除自身ID） -->
+    <!-- 根据名称查询未删除菜单 -->
     <select id="findMenuByNameExcludeSelf" resultMap="BaseResultMap">
         SELECT id, icon, name, state, url, p_id, acl_value, grade, is_del
         FROM t_menu

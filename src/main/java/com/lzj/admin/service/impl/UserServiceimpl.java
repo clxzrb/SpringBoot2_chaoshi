@@ -65,8 +65,6 @@ public class UserServiceimpl extends ServiceImpl<UserMapper, User> implements Us
 	public void updateUserInfo(User user) {
 		AssertUtil.isTrue(StringUtil.isEmpty(user.getUsername()), "用户名为空");
 		User temp = this.findForName(user.getUsername());
-		// 这条逻辑可以盘一盘，当前用户名已存在，如果id相同，代表是同一条数据，可以修改其属性，比如备注，备注名之类的
-		// 如果id不同，说明不是同一个用户，不可以修改其数据
 		AssertUtil.isTrue(temp != null && (temp.getId() != user.getId()), "此用户名存在");
 		AssertUtil.isTrue(!this.updateUser(user), "更新失败");
 	}
@@ -170,8 +168,6 @@ public class UserServiceimpl extends ServiceImpl<UserMapper, User> implements Us
 	public void updateUsermassage(User user, String roleIds) {
 		AssertUtil.isTrue(StringUtil.isEmpty(user.getUsername()), "用户名为空");
 		User temp = this.findForName(user.getUsername());
-		// 这条逻辑可以盘一盘，当前用户名已存在，如果id相同，代表是同一条数据，可以修改其属性，比如备注，备注名之类的
-		// 如果id不同，说明不是同一个用户，不可以修改其数据
 		AssertUtil.isTrue(temp != null && (temp.getId() != user.getId()), "此用户名存在");
 		AssertUtil.isTrue(!this.updateUser(user), "更新失败");
 		User userid = this.findForName(user.getUsername());

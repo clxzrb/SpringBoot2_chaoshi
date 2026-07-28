@@ -15,12 +15,12 @@ import java.util.Map;
  */
 public interface PurchaseListService extends IService<PurchaseList> {
 	/**
-         * 分页查询进货单列表
+     * 分页查询进货单列表
      */
     Map<String, Object> purchaseList(PurchaseListQuery purchaseListQuery);
 
     /**
-         * 删除进货单（级联删除商品明细）
+    * 删除进货单（级联删除商品明细）
      */
     void deletePurchaseList(Integer id);
     

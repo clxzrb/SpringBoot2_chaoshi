@@ -25,7 +25,7 @@
         SELECT
             tl.*,
             u.user_name AS userName,
-            s.NAME AS supplierName   <!-- 注意：s.NAME 大写，不加双引号 -->
+            s.NAME AS supplierName
         FROM
             t_purchase_list tl
             LEFT JOIN t_user u ON tl.user_id = u.id
@@ -80,7 +80,7 @@
         </where>
     </select>
 
-    <!-- 商品采购统计 - 获取分页数据（Oracle 分页） -->
+    <!-- 商品采购统计 - 获取分页数据  -->
     <select id="purchaseListQueryList" resultType="com.lzj.admin.model.CountResultModel">
         SELECT * FROM (
             SELECT 
@@ -90,7 +90,7 @@
                 SELECT
                     tl.purchase_number AS "number",
                     tl.purchase_date AS "date",
-                    s.NAME AS "name",          <!-- 注意：s.NAME 大写，不加双引号 -->
+                    s.NAME AS "name",
                     plg.code,
                     plg.name AS goodsName,
                     plg.model,

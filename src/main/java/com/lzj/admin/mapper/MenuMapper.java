@@ -21,7 +21,7 @@ public interface MenuMapper extends BaseMapper<Menu> {
     Menu findMenuByName(@Param("name") String name);
 
     /**
-     * 根据名称查询未删除菜单（排除自身ID）
+     * 根据名称查询未删除菜单
      */
     Menu findMenuByNameExcludeSelf(@Param("name") String name, @Param("id") Integer id);
 
