@@ -2,4 +2,63 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lzj.admin.mapper.MenuMapper">
 
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.lzj.admin.pojo.Menu">
+        <id column="id" property="id" />
+        <result column="icon" property="icon" />
+        <result column="name" property="name" />
+        <result column="state" property="state" />
+        <result column="url" property="url" />
+        <result column="p_id" property="pId" />
+        <result column="acl_value" property="aclValue" />
+        <result column="grade" property="grade" />
+        <result column="is_del" property="isDel" />
+    </resultMap>
+
+    <!-- 查询所有未删除菜单 -->
+    <select id="queryAllMenus" resultMap="BaseResultMap">
+        SELECT id, icon, name, state, url, p_id, acl_value, grade, is_del
+        FROM t_menu
+        WHERE is_del = 0
+        ORDER BY grade, p_id, id
+    </select>
+
+    <!-- 根据名称查询未删除菜单 -->
+    <select id="findMenuByName" resultMap="BaseResultMap">
+        SELECT id, icon, name, state, url, p_id, acl_value, grade, is_del
+        FROM t_menu
+        WHERE name = #{name}
+          AND is_del = 0
+    </select>
+
+    <!-- 根据名称查询未删除菜单（排除自身ID） -->
+    <select id="findMenuByNameExcludeSelf" resultMap="BaseResultMap">
+        SELECT id, icon, name, state, url, p_id, acl_value, grade, is_del
+        FROM t_menu
+        WHERE name = #{name}
+          AND is_del = 0
+          AND id != #{id}
+    </select>
+
+    <!-- 统计子菜单数量 -->
+    <select id="countChildren" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM t_menu
+        WHERE p_id = #{pId}
+          AND is_del = 0
+    </select>
+
+    <!-- 根据用户ID查询菜单权限 -->
+    <select id="findMenusByUserId" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            m.id, m.icon, m.name, m.state, m.url, m.p_id, m.acl_value, m.grade, m.is_del
+        FROM t_menu m
+        LEFT JOIN t_role_menu rm ON m.id = rm.menu_id
+        LEFT JOIN t_user_role ur ON rm.role_id = ur.role_id
+        WHERE m.is_del = 0
+          AND ur.user_id = #{userId}
+          AND m.state = 0
+        ORDER BY m.grade, m.p_id, m.id
+    </select>
+
 </mapper>

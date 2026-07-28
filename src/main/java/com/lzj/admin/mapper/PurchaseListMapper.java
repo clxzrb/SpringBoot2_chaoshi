@@ -21,4 +21,14 @@ public interface PurchaseListMapper extends BaseMapper<PurchaseList> {
          * 分页查询进货单（关联供应商、用户）
      */
     IPage<PurchaseList> purchaseList(IPage<PurchaseList> page, @Param("purchaseListQuery") PurchaseListQuery purchaseListQuery);
+    
+    /**
+     * 商品采购统计 - 获取总记录数
+     */
+    Long countPurchaseTotal(@Param("purchaseListQuery") PurchaseListQuery purchaseListQuery);
+
+    /**
+     * 商品采购统计 - 获取分页数据
+     */
+    List<CountResultModel> purchaseListQueryList(@Param("purchaseListQuery") PurchaseListQuery purchaseListQuery);
 }

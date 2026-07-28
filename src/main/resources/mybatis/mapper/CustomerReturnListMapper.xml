@@ -25,32 +25,33 @@
         where trunc(customer_return_date) = trunc(sysdate)
     </select>
     <select id="customerReturnList" resultType="com.lzj.admin.pojo.CustomerReturnList">
-        SELECT
-            crl.*,
-            u.user_name AS userName,
-            c.NAME AS customerName
-        FROM
-            t_customer_return_list crl
-        LEFT JOIN t_user u ON crl.user_id = u.id
-        LEFT JOIN t_customer c ON crl.customer_id = c.id
-        <where>
-            <if test="null !=customerReturnListQuery.customerReturnNumber and customerReturnListQuery.customerReturnNumber !='' ">
-                crl.customer_return_number =#{customerReturnListQuery.customerReturnNumber}
-            </if>
-            <if test="null !=customerReturnListQuery.customerId">
-                and crl.customer_id=#{customerReturnListQuery.customerId}
-            </if>
-            <if test="null !=customerReturnListQuery.state">
-                and crl.state = #{customerReturnListQuery.state}
-            </if>
-            <if test="null != customerReturnListQuery.startDate and customerReturnListQuery.startDate !='' ">
-                and customer_return_date &gt;= #{customerReturnListQuery.startDate}
-            </if>
-            <if test="null !=customerReturnListQuery.endDate and customerReturnListQuery.endDate !='' ">
-                and customer_return_date &lt;=#{customerReturnListQuery.endDate}
-            </if>
-
-        </where>
-    </select>
+	    SELECT
+	        crl.*,
+	        u.user_name AS userName,
+	        c."id" AS customerId,
+	        c."name" AS customerName
+	    FROM
+	        t_customer_return_list crl
+	    LEFT JOIN t_user u ON crl.user_id = u.id
+	    LEFT JOIN t_customer c ON crl.customer_id = c."id"
+	    <where>
+	        <if test="null !=customerReturnListQuery.customerReturnNumber and customerReturnListQuery.customerReturnNumber !='' ">
+	            and crl.customer_return_number = #{customerReturnListQuery.customerReturnNumber}
+	        </if>
+	        <if test="null !=customerReturnListQuery.customerId">
+	            and crl.customer_id = #{customerReturnListQuery.customerId}
+	        </if>
+	        <if test="null !=customerReturnListQuery.state">
+	            and crl.state = #{customerReturnListQuery.state}
+	        </if>
+	        <if test="null != customerReturnListQuery.startDate and customerReturnListQuery.startDate !='' ">
+	            and crl.customer_return_date &gt;= to_date(#{customerReturnListQuery.startDate}, 'YYYY-MM-DD')
+	        </if>
+	        <if test="null !=customerReturnListQuery.endDate and customerReturnListQuery.endDate !='' ">
+	            and crl.customer_return_date &lt;= to_date(#{customerReturnListQuery.endDate}, 'YYYY-MM-DD')
+	        </if>
+	    </where>
+	    ORDER BY crl.id DESC
+	</select>
 
 </mapper>

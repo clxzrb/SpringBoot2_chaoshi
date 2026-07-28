@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.lzj.admin.pojo.Supplier;
 import com.lzj.admin.query.SupplierQuery;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,4 +37,6 @@ public interface SupplierService extends IService<Supplier> {
      * 根据名称查询供应商
      */
     Supplier findSupplierByName(String name);
+    
+    List<Supplier> listAllSuppliers();
 }

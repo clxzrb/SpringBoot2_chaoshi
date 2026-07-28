@@ -95,7 +95,7 @@ public class CustomerController {
     }
     @RequestMapping("allCustomers")
     @ResponseBody
-    public List<Customer> allCustomers(){
-        return customerService.list(new QueryWrapper<Customer>().eq("is_del",0));
+    public List<Customer> allCustomers() {
+        return customerService.findAllCustomers();
     }
 }

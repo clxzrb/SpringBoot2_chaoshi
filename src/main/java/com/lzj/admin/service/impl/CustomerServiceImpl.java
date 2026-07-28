@@ -82,6 +82,15 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
 
     @Override
     public Customer findCustomerByName(String name) {
-        return this.baseMapper.findCustomerByName(name);
+    	List<Customer> list = this.list(new QueryWrapper<Customer>()
+                .eq("is_del", 0)
+                .eq("name", name)
+                .last("AND ROWNUM = 1"));
+        return list.isEmpty() ? null : list.get(0);
+    }
+    
+    @Override
+    public List<Customer> findAllCustomers() {
+        return customerMapper.findAllCustomers();
     }
 }

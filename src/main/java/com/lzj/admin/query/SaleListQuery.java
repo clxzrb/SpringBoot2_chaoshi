@@ -16,9 +16,9 @@ public class SaleListQuery extends BaseQuery{
     private String saleNumber;
     private Integer customerId;
     private Integer state;
-
-
-
+    
+    
+    
     private String startDate;
     private String endDate;
     private String goodsName;
@@ -26,4 +26,6 @@ public class SaleListQuery extends BaseQuery{
     private List<Integer> typeIds;
 
     public Integer index;
+    private Integer startRow;
+    private Integer endRow;
 }

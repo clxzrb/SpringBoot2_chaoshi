@@ -41,6 +41,8 @@ import java.util.Map;
 public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, PurchaseList> implements PurchaseListService {
 	@Resource
     private PurchaseListGoodsService purchaseListGoodsService;
+	@Resource
+    private GoodsService goodsService;
 
     @Override
     public Map<String, Object> purchaseList(PurchaseListQuery purchaseListQuery) {
@@ -59,5 +61,77 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
         AssertUtil.isTrue(!this.removeById(id), "进货单删除失败");
     }
 
+    @Override
+    public Map<String, Object> countPurchase(PurchaseListQuery purchaseListQuery) {
+        // 计算分页参数
+        int page = purchaseListQuery.getPage() != null ? purchaseListQuery.getPage() : 1;
+        int limit = purchaseListQuery.getLimit() != null ? purchaseListQuery.getLimit() : 10;
+        int start = (page - 1) * limit;
+        int end = page * limit;
 
+        purchaseListQuery.setIndex(start);
+        purchaseListQuery.setStartRow(start);
+        purchaseListQuery.setEndRow(end);
+
+        // 查询总数
+        Long count = this.baseMapper.countPurchaseTotal(purchaseListQuery);
+        // 查询分页数据
+        List<CountResultModel> list = this.baseMapper.purchaseListQueryList(purchaseListQuery);
+        return PageResultUtil.setResult(count, list);
+    }
+    
+    //生成单号
+    @Override
+    public String createPurchaseNumber() {
+        // 获取当前日期 yyyyMMdd
+        String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        // 查询当天已有多少进货单
+        QueryWrapper<PurchaseList> wrapper = new QueryWrapper<>();
+        wrapper.likeRight("purchase_number", "JH" + date);
+        int count = this.count(wrapper);
+        // 生成三位流水号
+        String serialNumber = String.format("%03d", count + 1);
+        return "JH" + date + serialNumber;
+    }
+
+    
+    //新增：保存进货单
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void savePurchaseList(PurchaseList purchaseList, List<PurchaseListGoods> plgList) {
+        // 1. 参数校验
+        AssertUtil.isTrue(purchaseList.getSupplierId() == null || purchaseList.getSupplierId() == 0, "请选择供应商");
+        AssertUtil.isTrue(purchaseList.getAmountPayable() == null, "应付金额为空");
+        AssertUtil.isTrue(purchaseList.getAmountPaid() == null, "实付金额为空");
+        AssertUtil.isTrue(purchaseList.getPurchaseDate() == null, "请选择进货日期");
+        AssertUtil.isTrue(plgList == null || plgList.isEmpty(), "请选择商品");
+
+        // 2. 保存进货单主表（MyBatis-Plus 自动回填 ID）
+        AssertUtil.isTrue(!this.save(purchaseList), "进货单保存失败!");
+
+        // 3. 保存商品明细 + 更新库存（核心逻辑）
+        for (PurchaseListGoods plg : plgList) {
+            // 设置进货单ID
+            plg.setPurchaseListId(purchaseList.getId());
+
+            // ✅ 核心：更新商品库存（进货 = 库存增加）
+            Goods goods = goodsService.getById(plg.getGoodsId());
+            if (goods != null) {
+                // 原库存 + 进货数量 = 新库存
+                int newQuantity = goods.getInventoryQuantity() + plg.getNum();
+                goods.setInventoryQuantity(newQuantity);
+                goods.setState(2);  // 有进货或销售单据
+                goods.setLastPurchasingPrice(plg.getPrice());  // 更新上次采购价
+                AssertUtil.isTrue(!goodsService.updateById(goods), "商品库存更新失败!");
+                
+                System.out.println("商品ID: " + goods.getId() + 
+                    ", 原库存: " + (goods.getInventoryQuantity() - plg.getNum()) + 
+                    ", 进货: " + plg.getNum() + 
+                    ", 新库存: " + goods.getInventoryQuantity());
+            }
+
+            // 保存进货商品明细
+            AssertUtil.isTrue(!purchaseListGoodsService.save(plg), "进货商品记录添加失败!");
+        }
+    }
 }

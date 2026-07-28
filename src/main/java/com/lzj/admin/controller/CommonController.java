@@ -2,8 +2,11 @@ package com.lzj.admin.controller;
 
 import com.lzj.admin.model.GoodsModel;
 import com.lzj.admin.pojo.Goods;
+import com.lzj.admin.pojo.GoodsType;
 import com.lzj.admin.query.GoodsQuery;
 import com.lzj.admin.service.GoodsService;
+import com.lzj.admin.service.GoodsTypeService;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +25,8 @@ public class CommonController {
     @Resource
     private GoodsService goodsService;
 
+    @Resource
+    private GoodsTypeService goodsTypeService;
 
 
     /**
@@ -41,6 +46,20 @@ public class CommonController {
      */
     @RequestMapping("toAddGoodsInfoPage")
     public String toGoodsInfoPage(Integer gid, Model model){
+    	// 根据商品id查询商品
+        Goods goods = goodsService.getById(gid);
+        if (goods != null) {
+            // 补充商品单位
+            goods.setUnitName(goods.getUnit());
+            // 补充商品类别
+            if (goods.getTypeId() != null) {
+                GoodsType goodsType = goodsTypeService.getById(goods.getTypeId());
+                if (goodsType != null) {
+                    goods.setTypeName(goodsType.getName());
+                }
+            }
+            model.addAttribute("goods", goods);
+        }
         return "common/goods_add_update";
     }
 
@@ -53,6 +72,24 @@ public class CommonController {
      */
     @RequestMapping("toUpdateGoodsInfoPage")
     public String toUpdateGoodsInfoPage(GoodsModel goodsModel, Model model){
+    	// 根据商品id查询商品基本信息
+        Goods goods = goodsService.getById(goodsModel.getId());
+        if (goods != null) {
+            // 补充商品单位
+            goods.setUnitName(goods.getUnit());
+            // 补充商品类别
+            if (goods.getTypeId() != null) {
+                GoodsType goodsType = goodsTypeService.getById(goods.getTypeId());
+                if (goodsType != null) {
+                    goods.setTypeName(goodsType.getName());
+                }
+            }
+            model.addAttribute("goods", goods);
+        }
+        // 将本次进货信息传递给前端页面
+        model.addAttribute("goodsModel", goodsModel);
+        // flag设置为1则调用更新，否则调用新增
+        model.addAttribute("flag", 1);
         return "common/goods_add_update";
     }
 
@@ -71,7 +108,8 @@ public class CommonController {
     @RequestMapping("stockList")
     @ResponseBody
     public Map<String,Object> stockLick(GoodsQuery goodsQuery){
-        return null;
+    	//库存查询不需要过滤type，查询所有未删除商品
+        return goodsService.goodsList(goodsQuery);
     }
 
 
@@ -104,7 +142,7 @@ public class CommonController {
     @ResponseBody
     public Map<String,Object> listAlarm(GoodsQuery goodsQuery){
         goodsQuery.setType(3);
-        return null;
+        return goodsService.goodsList(goodsQuery);
     }
 
 

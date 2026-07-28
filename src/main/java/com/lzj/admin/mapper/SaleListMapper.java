@@ -29,4 +29,5 @@ public interface SaleListMapper extends BaseMapper<SaleList> {
 
     List<Map<String, Object>>  countDaySale(@Param("begin") String begin, @Param("end") String end);
 
+    List<Map<String, Object>> countMonthSale(@Param("begin") String begin, @Param("end") String end);
 }

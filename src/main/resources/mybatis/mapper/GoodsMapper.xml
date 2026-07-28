@@ -58,8 +58,8 @@
 
             <!-- 商品名称模糊查询 -->
             <if test="null != goodsQuery.goodsName and goodsQuery.goodsName != ''">
-                tg.name LIKE CONCAT('%',#{goodsQuery.goodsName},'%')
-            </if>
+            	AND tg.name LIKE '%' || #{goodsQuery.goodsName} || '%'
+        	</if>
 
             <!-- 单类别筛选 -->
             <if test="null != goodsQuery.typeId">

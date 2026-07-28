@@ -85,9 +85,9 @@ public class SupplierController {
     /**
      * 查询所有供应商
      */
-    @RequestMapping("allSuppliers")
+    @RequestMapping("allGoodsSuppliers")
     @ResponseBody
-    public List<Supplier> allSuppliers() {
-        return supplierService.list(new QueryWrapper<Supplier>().eq("is_del", 0));
+    public List<Supplier> allGoodsSuppliers() {
+        return supplierService.listAllSuppliers();
     }
 }

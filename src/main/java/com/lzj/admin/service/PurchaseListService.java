@@ -23,4 +23,14 @@ public interface PurchaseListService extends IService<PurchaseList> {
          * 删除进货单（级联删除商品明细）
      */
     void deletePurchaseList(Integer id);
+    
+    /**
+     * 商品采购统计
+     */
+    Map<String, Object> countPurchase(PurchaseListQuery purchaseListQuery);
+    
+    String createPurchaseNumber();
+    
+    //保存进货单
+    void savePurchaseList(PurchaseList purchaseList, List<PurchaseListGoods> plgList);
 }

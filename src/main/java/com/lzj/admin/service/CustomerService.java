@@ -4,6 +4,7 @@ import com.lzj.admin.pojo.Customer;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lzj.admin.query.CustomerQuery;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,4 +23,6 @@ public interface CustomerService extends IService<Customer> {
     void deleteCustomer(Integer[] ids);
 
     Customer findCustomerByName(String name);
+    
+    List<Customer> findAllCustomers();
 }

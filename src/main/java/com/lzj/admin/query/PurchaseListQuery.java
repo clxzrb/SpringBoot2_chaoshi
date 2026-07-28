@@ -24,4 +24,6 @@ public class PurchaseListQuery  extends BaseQuery{
     private List<Integer> typeIds;
 
     public Integer index;
+    private Integer startRow;
+    private Integer endRow;
 }

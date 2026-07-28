@@ -54,7 +54,10 @@ public class UserServiceimpl extends ServiceImpl<UserMapper, User> implements Us
 
 	@Override
 	public User findForName(String username) {
-		return userMapper.oneUser(username);
+		List<User> list = this.list(new QueryWrapper<User>()
+	            .eq("user_name", username)
+	            .last("AND ROWNUM = 1"));
+	    return list.isEmpty() ? null : list.get(0);
 	}
 
 	@Override

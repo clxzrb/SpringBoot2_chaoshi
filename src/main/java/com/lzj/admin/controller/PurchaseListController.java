@@ -32,8 +32,10 @@ import java.util.Map;
 @RequestMapping("/purchase")
 public class PurchaseListController {
 	@GetMapping("/index")
-    public String index(){
-        // 返回ftl页面名称
+    public String index(Model model) {
+        //生成进货单号
+        String purchaseNumber = purchaseListService.createPurchaseNumber();
+        model.addAttribute("purchaseNumber", purchaseNumber);
         return "purchase/purchase";
     }
 	
@@ -45,6 +47,9 @@ public class PurchaseListController {
 	
 	@Resource
     private PurchaseListService purchaseListService;
+	
+	@Resource
+    private UserService userService;
 	/**
          * 分页列表数据接口
      */
@@ -62,5 +67,32 @@ public class PurchaseListController {
     public RespBean delete(Integer id){
         purchaseListService.deletePurchaseList(id);
         return RespBean.success("删除成功");
+    }
+    
+    /**
+     * 商品采购统计接口
+     */
+    @RequestMapping("countPurchase")
+    @ResponseBody
+    public Map<String, Object> countPurchase(PurchaseListQuery purchaseListQuery) {
+        return purchaseListService.countPurchase(purchaseListQuery);
+    }
+    
+    //保存进货单
+    @RequestMapping("save")
+    @ResponseBody
+    public RespBean save(PurchaseList purchaseList, String goodsJson, Principal principal) {
+        // 获取当前登录用户ID
+        String userName = principal.getName();
+        purchaseList.setUserId(userService.findForName(userName).getId());
+
+        // 解析商品JSON数据
+        Gson gson = new Gson();
+        List<PurchaseListGoods> plgList = gson.fromJson(goodsJson, new TypeToken<List<PurchaseListGoods>>(){}.getType());
+
+        // 保存进货单
+        purchaseListService.savePurchaseList(purchaseList, plgList);
+
+        return RespBean.success("商品进货入库成功!");
     }
 }

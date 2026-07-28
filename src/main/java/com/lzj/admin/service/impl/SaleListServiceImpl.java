@@ -105,25 +105,21 @@ public class SaleListServiceImpl extends ServiceImpl<SaleListMapper, SaleList> i
 
     @Override
     public Map<String, Object> countSale(SaleListQuery saleListQuery) {
-        /**
-         * 分页查询
-         *   查总数
-         *   查当前页列表
-         */
-        if(null !=saleListQuery.getTypeId()){
-            //List<Integer> typeIds= goodsTypeService.queryAllSubTypeIdsByTypeId(saleListQuery.getTypeId());
-            //saleListQuery.setTypeIds(typeIds);
-        }
-        /**
-         *  page
-         *    1-->0
-         *    2-->10
-         *    3-->20
-         */
-        saleListQuery.setIndex((saleListQuery.getPage()-1)*saleListQuery.getLimit());
-        Long count  = this.baseMapper.countSaleTotal(saleListQuery);
-        List<CountResultModel> list =this.baseMapper.saleListQueryList(saleListQuery);
-        return PageResultUtil.setResult(count,list);
+        // 计算分页参数
+        int page = saleListQuery.getPage() != null ? saleListQuery.getPage() : 1;
+        int limit = saleListQuery.getLimit() != null ? saleListQuery.getLimit() : 10;
+        int start = (page - 1) * limit;
+        int end = page * limit;
+        
+        saleListQuery.setIndex(start);
+        saleListQuery.setStartRow(start);
+        saleListQuery.setEndRow(end);
+        
+        // 查询总数
+        Long count = this.baseMapper.countSaleTotal(saleListQuery);
+        // 查询分页数据
+        List<CountResultModel> list = this.baseMapper.saleListQueryList(saleListQuery);
+        return PageResultUtil.setResult(count, list);
     }
 
     @Override
@@ -131,4 +127,8 @@ public class SaleListServiceImpl extends ServiceImpl<SaleListMapper, SaleList> i
         return this.baseMapper.countDaySale(begin,end);
     }
 
+    @Override
+    public List<Map<String, Object>> countMonthSale(String begin, String end) {
+        return this.baseMapper.countMonthSale(begin, end);
+    }
 }

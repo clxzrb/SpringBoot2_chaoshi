@@ -23,7 +23,7 @@
 	    SELECT COUNT(1) FROM t_customer
 	    WHERE "is_del" = 0
 	    <if test="null != customerQuery.customerName and customerQuery.customerName != ''">
-	        AND "name" LIKE CONCAT('%',#{customerQuery.customerName},'%')
+	        AND "name" LIKE '%' || #{customerQuery.customerName} || '%'
 	    </if>
 	</select>
 	
@@ -33,7 +33,7 @@
 	    FROM t_customer
 	    WHERE "is_del" = 0
 	    <if test="null != customerQuery.customerName and customerQuery.customerName != ''">
-	        "name" LIKE CONCAT('%',#{customerQuery.customerName},'%')
+	       AND "name" LIKE '%' || #{customerQuery.customerName} || '%'
 	    </if>
 	    ORDER BY "id" DESC
 	</select>
@@ -44,4 +44,12 @@
         FROM t_customer
         WHERE "is_del" = 0 AND "name" = #{name}
     </select>
+    
+    <!-- ✅ 查询所有未删除客户 -->
+	<select id="findAllCustomers" resultMap="BaseResultMap">
+	    SELECT "id", "address", "contact", "name", "number", "remarks", "is_del"
+	    FROM t_customer
+	    WHERE "is_del" = 0
+	    ORDER BY "id" DESC
+	</select>
 </mapper>

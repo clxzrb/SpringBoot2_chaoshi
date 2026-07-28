@@ -138,5 +138,43 @@ public class SaleListController {
         return result;
     }
 
+    
+    //月统计接口
+    @RequestMapping("countSaleByMonth")
+    @ResponseBody
+    public Map<String, Object> countMonthSale(String begin, String end) {
+        Map<String, Object> result = new HashMap<>();
+        List<SaleCount> saleCounts = new ArrayList<>();
+        
+        List<Map<String, Object>> list = saleListService.countMonthSale(begin, end);
+        List<String> datas = DateUtil.getRangeMonth(begin, end);
+        
+        for (String data : datas) {
+            SaleCount saleCount = new SaleCount();
+            saleCount.setDate(data);
+            boolean flag = true;
+            for (Map<String, Object> map : list) {
+                String dd = map.get("SALEMONTH").toString();
+                if (data.equals(dd)) {
+                    saleCount.setAmountCost(MathUtil.format2Bit(Float.parseFloat(map.get("AMOUNTCOST").toString())));
+                    saleCount.setAmountSale(MathUtil.format2Bit(Float.parseFloat(map.get("AMOUNTSALE").toString())));
+                    saleCount.setAmountProfit(MathUtil.format2Bit(saleCount.getAmountSale() - saleCount.getAmountCost()));
+                    flag = false;
+                }
+            }
+            if (flag) {
+                saleCount.setAmountProfit(0F);
+                saleCount.setAmountSale(0F);
+                saleCount.setAmountCost(0F);
+            }
+            saleCounts.add(saleCount);
+        }
+
+        result.put("count", saleCounts.size());
+        result.put("data", saleCounts);
+        result.put("code", 0);
+        result.put("msg", "");
+        return result;
+    }
 
 }

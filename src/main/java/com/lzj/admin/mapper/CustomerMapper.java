@@ -1,5 +1,7 @@
 package com.lzj.admin.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -11,4 +13,5 @@ public interface CustomerMapper extends BaseMapper<Customer> {
 	IPage<Customer> customerPageList(IPage<Customer> page, @Param("customerQuery") CustomerQuery customerQuery);
 	Long countCustomer(@Param("customerQuery") CustomerQuery customerQuery);
 	Customer findCustomerByName(@Param("name") String name);
+	List<Customer> findAllCustomers();
 }

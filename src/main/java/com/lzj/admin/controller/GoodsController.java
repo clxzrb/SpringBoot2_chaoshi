@@ -1,6 +1,7 @@
 package com.lzj.admin.controller;
 
 
+import com.lzj.admin.dto.TreeDto;
 import com.lzj.admin.model.RespBean;
 import com.lzj.admin.pojo.Goods;
 import com.lzj.admin.pojo.GoodsType;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,7 +67,7 @@ public class GoodsController {
     }
 
     /**
-     * 新增/编辑商品提交
+     * 新增商品提交
      */
     @RequestMapping("save")
     @ResponseBody
@@ -77,17 +80,24 @@ public class GoodsController {
     @RequestMapping("update")
     @ResponseBody
     public RespBean update(Goods goods){
-        goodsService.saveGoods(goods);
+        goodsService.updateGoods(goods);
         return RespBean.success("修改成功");
     }
 
     /**
-     * 删除商品
+     * 批量删除商品
      */
     @RequestMapping("delete")
     @ResponseBody
-    public RespBean delete(Integer id){
+    public RespBean deleteSupplier(Integer id){
         goodsService.deleteGoods(id);
-        return RespBean.success("删除成功");
+        return RespBean.success("商品记录删除成功");
+    }
+    
+    //查询所有商品类别（树状图）
+    @RequestMapping("queryAllGoodsTypes")
+    @ResponseBody
+    public List<TreeDto> queryAllGoodsTypes() {
+        return goodsService.queryAllGoodsTypes(null);
     }
 }
